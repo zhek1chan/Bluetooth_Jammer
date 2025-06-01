@@ -3,4 +3,5 @@
     <color name="green_prime">#0F4D0F</color>
     <color name="white">#FFFFFFFF</color>
     <color name="black">#000</color>
+    <color name="gray">#40484D</color>
 </resources>
