@@ -25,13 +25,6 @@ class LaunchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val blackColor = ContextCompat.getColor(this, R.color.black)
         val whiteColor = ContextCompat.getColor(this, R.color.white)
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.auto(lightScrim = whiteColor, darkScrim = blackColor),
-            navigationBarStyle = SystemBarStyle.auto(
-                lightScrim = whiteColor,
-                darkScrim = blackColor
-            )
-        )
         val binding = ActivityLaunchBinding.inflate(layoutInflater)
         bindingRef = WeakReference(binding)
         setContentView(binding.root)

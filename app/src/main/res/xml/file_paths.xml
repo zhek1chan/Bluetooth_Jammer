@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- For writing to external storage -->
+    <external-path
+        name="external"
+        path="." />
+    <!-- For writing to internal storage -->
+    <files-path
+        name="files"
+        path="." />
+    <!-- For writing to cache directory -->
+    <cache-path
+        name="cache"
+        path="." />
+    <!-- For writing to external files directory -->
+    <external-files-path
+        name="external_files"
+        path="." />
+    <!-- For writing to external cache directory -->
+    <external-cache-path
+        name="external_cache"
+        path="." />
+</paths>

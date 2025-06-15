@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
     android:layout_height="match_parent">
 
 
@@ -40,5 +41,19 @@
         android:layout_height="match_parent"
         android:textSize="9sp"
         android:layout_marginTop="50dp"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/scanButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:contentDescription="Сделать сканирование"
+        android:src="@drawable/baseline_search_24"
+        app:backgroundTint="?attr/colorPrimary"
+        app:tint="@color/white"
+        android:text="Сделать сканирование"
+        app:fabSize="normal" />
 
 </RelativeLayout>

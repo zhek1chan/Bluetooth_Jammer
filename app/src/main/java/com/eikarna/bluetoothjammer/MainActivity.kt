@@ -3,17 +3,13 @@ package com.eikarna.bluetoothjammer
 import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
-import android.content.BroadcastReceiver
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.ListView
@@ -24,6 +20,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.eikarna.bluetoothjammer.api.BluetoothDeviceInfo
 import com.eikarna.bluetoothjammer.api.ScanNearbyDevices
+import com.eikarna.bluetoothjammer.scan.ScanActivity
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
 
@@ -46,19 +44,9 @@ class MainActivity : AppCompatActivity() {
         }
         // Check and request necessary permissions
         checkBluetoothStatusAndPermissions()
-        val requestCode = 1
-        val discoverableIntent: Intent = Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE).apply {
-            putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 5000)
+        findViewById<FloatingActionButton>(R.id.scanButton).setOnClickListener {
+            startActivity(Intent(this, ScanActivity::class.java))
         }
-        @Suppress("DEPRECATION")
-        startActivityForResult(discoverableIntent, requestCode)
-        // Register for broadcasts when a device is discovered.
-        var filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
-        registerReceiver(receiver, filter)
-
-        // Register for broadcasts when discovery has finished
-        filter = IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
-        this.registerReceiver(receiver, filter)
     }
 
     private fun checkBluetoothStatusAndPermissions() {
@@ -71,32 +59,6 @@ class MainActivity : AppCompatActivity() {
         } else {
             // Bluetooth is enabled, proceed with permission checks
             checkPermissionsAndStartScanning()
-        }
-    }
-
-    // Create a BroadcastReceiver for ACTION_FOUND.
-    @Suppress("DEPRECATION")
-    private val receiver = object : BroadcastReceiver() {
-
-        @SuppressLint("MissingPermission")
-        override fun onReceive(context: Context, intent: Intent) {
-            // Initialize the ListView and Adapter
-            val action: String? = intent.action
-            Log.d("MainActivity", "Action: $action")
-            println("Action: $action")
-            if (BluetoothDevice.ACTION_FOUND == action) {
-                // Discovery has found a device. Get the BluetoothDevice
-                Log.d("MainActivity", "Device Found")
-                println("Device Found")
-                val device: BluetoothDevice? =
-                    intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-                val deviceInfo = BluetoothDeviceInfo(
-                    name = device?.name ?: "Unknown Device",
-                    address = device?.address ?: "00:00:00:00"
-                )
-                // Add the device to the list and notify the adapter
-                ScanNearbyDevices.devicesList.add(deviceInfo)
-            }
         }
     }
 

@@ -55,7 +55,16 @@ android {
 }
 
 dependencies {
-
+    implementation ("androidx.compose.material:material:1.7.3")
+    implementation ("androidx.compose.ui:ui-tooling-preview:1.7.3")
+    androidTestImplementation ("androidx.compose.ui:ui-test-junit4:1.7.3")
+    debugImplementation ("androidx.compose.ui:ui-tooling:1.7.3")
+    implementation ("androidx.ui:ui-tooling:1.0.0-alpha07")
+    implementation ("androidx.compose.runtime:runtime:1.7.3")
+    implementation ("androidx.compose.compiler:compiler:1.5.5")
+    //noinspection GradleDependency
+    debugImplementation ("androidx.compose.ui:ui-test-manifest:1.7.3")
+    implementation ("com.airbnb.android:lottie-compose:5.2.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
