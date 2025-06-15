@@ -6,33 +6,36 @@ import android.text.method.LinkMovementMethod
 import androidx.appcompat.app.AppCompatActivity
 import com.eikarna.bluetoothjammer.databinding.ActivityDisclaimerBinding
 
-class DisclaimerActivity : AppCompatActivity() {
+class DisclaimerActivity: AppCompatActivity()
+{
+	private lateinit var binding: ActivityDisclaimerBinding
+	override fun onCreate(savedInstanceState: Bundle?)
+	{
+		super.onCreate(savedInstanceState)
+		binding = ActivityDisclaimerBinding.inflate(layoutInflater)
+		setContentView(binding.root)
 
-    private lateinit var binding: ActivityDisclaimerBinding
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityDisclaimerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+		setupUi()
+	}
 
-        setupUi()
-    }
+	private fun setupUi()
+	{
+		with(binding) {
+			githubLink.movementMethod = LinkMovementMethod.getInstance()
 
-    private fun setupUi() {
-        with(binding) {
-            githubLink.movementMethod = LinkMovementMethod.getInstance()
+			acceptButton.setOnClickListener {
+				startMainActivity()
+			}
 
-            acceptButton.setOnClickListener {
-                startMainActivity()
-            }
+			toolbar.setNavigationOnClickListener {
+				onBackPressed()
+			}
+		}
+	}
 
-            toolbar.setNavigationOnClickListener {
-                onBackPressed()
-            }
-        }
-    }
-
-    private fun startMainActivity() {
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
-    }
+	private fun startMainActivity()
+	{
+		startActivity(Intent(this, MainActivity::class.java))
+		finish()
+	}
 }
