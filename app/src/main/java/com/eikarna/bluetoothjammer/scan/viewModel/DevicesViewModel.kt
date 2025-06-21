@@ -53,7 +53,7 @@ class DevicesViewModel(val saveFile: () -> Unit) : ViewModel()
 
 	fun setScanner(activity: ComponentActivity)
 	{
-		scanner = BTScanner(activity, scanTime, -200, this)
+		scanner = BTScanner(activity, scanTime, -75, this)
 	}
 
 	fun saveToFile() {

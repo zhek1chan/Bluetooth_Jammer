@@ -65,7 +65,7 @@ class ScanNearbyDevices
 					// Return the list of devices to the callback function
 					callback(devicesList)
 					// Schedule the next scan after 5 second
-					handler.postDelayed(this, 5000)
+					//handler.postDelayed(this, 5000)
 				}
 			}
 			// Start the periodic scanning

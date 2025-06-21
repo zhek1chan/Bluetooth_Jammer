@@ -230,7 +230,7 @@ fun DevicesList(viewModel: DevicesViewModel) {
                         viewModel.saveToFile()
                     },
                 ) {
-                    Text("Сохранить результата поиска в файл", color = Color.White)
+                    Text("Сохранить результат поиска в файл", color = Color.White)
                     Icon(
                         modifier = Modifier.padding(start = 5.dp),
                         painter = painterResource(R.drawable.download),
