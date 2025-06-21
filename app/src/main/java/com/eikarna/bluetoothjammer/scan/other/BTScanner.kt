@@ -1,4 +1,4 @@
-package com.eikarna.bluetoothjammer.scan.Other
+package com.eikarna.bluetoothjammer.scan.other
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
@@ -7,8 +7,8 @@ import android.content.Context
 import android.util.Log
 import androidx.activity.ComponentActivity
 import com.eikarna.bluetoothjammer.scan.BTUtils
-import com.eikarna.bluetoothjammer.scan.ViewModel.DevicesViewModel
-import com.eikarna.bluetoothjammer.scan.Model.BTDevice
+import com.eikarna.bluetoothjammer.scan.model.BTDevice
+import com.eikarna.bluetoothjammer.scan.viewModel.DevicesViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -54,15 +54,13 @@ data class BTScanner(
 		if(enable && !isScanning)
 		{
 			Log.d("Scanner", "Starting Scanning...")
-
-			GlobalScope.launch(Dispatchers.Default) {
+			isScanning = true
+			bluetoothAdapter.startLeScan(scanCallback)
+			GlobalScope.launch(Dispatchers.Main) {
 				delay(scanTime)
 				isScanning = false
 				bluetoothAdapter.stopLeScan(scanCallback)
 			}
-
-			isScanning = true
-			bluetoothAdapter.startLeScan(scanCallback)
 		}
 	}
 

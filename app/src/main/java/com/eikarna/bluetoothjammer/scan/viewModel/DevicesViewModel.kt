@@ -1,10 +1,10 @@
-package com.eikarna.bluetoothjammer.scan.ViewModel
+package com.eikarna.bluetoothjammer.scan.viewModel
 
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
-import com.eikarna.bluetoothjammer.scan.Model.BTDevice
-import com.eikarna.bluetoothjammer.scan.Other.BTScanner
+import com.eikarna.bluetoothjammer.scan.model.BTDevice
+import com.eikarna.bluetoothjammer.scan.other.BTScanner
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -53,7 +53,7 @@ class DevicesViewModel(val saveFile: () -> Unit) : ViewModel()
 
 	fun setScanner(activity: ComponentActivity)
 	{
-		scanner = BTScanner(activity, scanTime, -75, this)
+		scanner = BTScanner(activity, scanTime, -200, this)
 	}
 
 	fun saveToFile() {

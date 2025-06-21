@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.eikarna.bluetoothjammer.scan.ViewModel.DevicesViewModel
+import com.eikarna.bluetoothjammer.scan.viewModel.DevicesViewModel
 import com.yonigofman.bluetoothscannerapp.ui.theme.Background2
 
 @Composable
@@ -16,8 +16,8 @@ fun HomeScreen(
 )
 {
 	Column(modifier = modifier
-        .fillMaxSize()
-        .background(Background2),
+		.fillMaxSize()
+		.background(Background2),
 		horizontalAlignment = Alignment.CenterHorizontally
 	) {
 		DevicesList(viewModel)

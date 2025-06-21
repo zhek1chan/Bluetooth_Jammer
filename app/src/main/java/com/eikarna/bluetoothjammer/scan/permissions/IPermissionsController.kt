@@ -1,4 +1,4 @@
-package com.eikarna.bluetoothjammer.scan.Permissions
+package com.eikarna.bluetoothjammer.scan.permissions
 
 import androidx.activity.ComponentActivity
 

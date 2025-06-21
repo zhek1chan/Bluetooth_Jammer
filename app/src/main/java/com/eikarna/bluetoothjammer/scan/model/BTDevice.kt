@@ -1,4 +1,4 @@
-package com.eikarna.bluetoothjammer.scan.Model
+package com.eikarna.bluetoothjammer.scan.model
 
 data class BTDevice(
 	val name: String = "",

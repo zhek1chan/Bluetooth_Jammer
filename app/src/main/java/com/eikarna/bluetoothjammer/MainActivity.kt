@@ -55,7 +55,6 @@ class MainActivity : AppCompatActivity() {
         if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
             // Bluetooth is either not supported or not enabled, show dialog
             showBluetoothDisabledDialog()
-            finishActivity(0)
         } else {
             // Bluetooth is enabled, proceed with permission checks
             checkPermissionsAndStartScanning()
@@ -73,7 +72,12 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
             .setNegativeButton("Cancel") { _, _ ->
-                finishActivity(0)
+                checkBluetoothStatusAndPermissions()
+                Toast.makeText(
+                    this,
+                    "Пока вы не включите Bluetooth,\nприложение не будет работать",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
         val dialog: AlertDialog = builder.create()
@@ -212,6 +216,6 @@ class MainActivity : AppCompatActivity() {
     // Resume scanning
     override fun onResume() {
         super.onResume()
-        scanner.resumeScanning()
+        checkBluetoothStatusAndPermissions()
     }
 }

@@ -1,9 +1,11 @@
 package com.eikarna.bluetoothjammer.scan.components
 
 import android.app.Activity
+import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -46,8 +48,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.eikarna.bluetoothjammer.AttackActivity
+import com.eikarna.bluetoothjammer.scan.viewModel.DevicesViewModel
 import com.eikarna.bluetoothjammer.R
-import com.eikarna.bluetoothjammer.scan.ViewModel.DevicesViewModel
 import com.yonigofman.bluetoothscannerapp.ui.theme.Green1
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
@@ -96,8 +99,15 @@ fun DevicesList(viewModel: DevicesViewModel) {
     ) {
         if (!startWasPressed) {
             MyButton("Старт") {
-                if (numericValue.isNotEmpty()) {
+                val length = numericValue.length
+                if (length >= 2 && numericValue[0] != '0') {
                     viewModel.setScanTime(numericValue.toLong())
+                } else if (length != 0) {
+                    Toast.makeText(
+                        context,
+                        "Вы ввели неправильное число\nИспользуется 10сек",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
                 viewModel.startScan()
                 isPlaying = true
@@ -134,8 +144,8 @@ fun DevicesList(viewModel: DevicesViewModel) {
 
             LinearProgressIndicator(
                 modifier = Modifier
-					.fillMaxWidth()
-					.padding(horizontal = 8.dp),
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
                 progress = progress,
                 color = Color.Green,
                 backgroundColor = Color.Black
@@ -153,8 +163,25 @@ fun DevicesList(viewModel: DevicesViewModel) {
             NumericInputField(
                 value = numericValue,
                 onValueChange = { numericValue = it },
-                label = { Text("Введите время сканирования в секундах", color = Color.White) },
-                placeholder = { Text("Только цифры") }
+                label = {
+                    Text(
+                        "Введите время сканирования в секундах(от 10)",
+                        color = Color.White,
+                        style = TextStyle(fontSize = 14.sp),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 15.dp)
+                    )
+                },
+                placeholder = {
+                    Text(
+                        "Только цифры",
+                        color = Color.LightGray,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             )
         } else {
             Text(
@@ -173,7 +200,6 @@ fun DevicesList(viewModel: DevicesViewModel) {
         }
 
         if (!isPlaying && startWasPressed) {
-            val context = LocalContext.current
             LaunchedEffect(Unit) {
                 Toast.makeText(
                     context,
@@ -183,8 +209,8 @@ fun DevicesList(viewModel: DevicesViewModel) {
             }
             Row(
                 modifier = Modifier
-					.padding(top = 15.dp)
-					.fillMaxWidth(),
+                    .padding(top = 15.dp)
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
                 MyButtonSmall(text) {
@@ -194,8 +220,8 @@ fun DevicesList(viewModel: DevicesViewModel) {
             Row(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
-					.fillMaxWidth()
-					.padding(top = 8.dp)
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
             ) {
                 Button(
                     modifier = Modifier,
@@ -214,14 +240,35 @@ fun DevicesList(viewModel: DevicesViewModel) {
                 }
             }
         }
-
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(20.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(displayedDevices) { device ->
-                DeviceItem(device = device)
+        if (displayedDevices.isEmpty() && startWasPressed && !isPlaying) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Text(
+                    "Список найденных устройств пуст",
+                    color = Color.White,
+                    style = TextStyle(fontSize = 20.sp),
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(20.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(displayedDevices) { device ->
+                    DeviceItem(
+                        device = device,
+                        onClick = {
+                            context.startActivity(
+                                Intent(context, AttackActivity::class.java).apply {
+                                    putExtra("DEVICE_NAME", device.name)
+                                    putExtra("ADDRESS", device.mac)
+                                    putExtra("THREADS", 8)
+                                }
+                            )
+                        }
+                    )
+                }
             }
         }
     }
@@ -245,7 +292,9 @@ fun NumericInputField(
                 onValueChange(newText)
             }
         },
-        modifier = modifier.padding(8.dp),
+        modifier = modifier
+            .padding(top = 25.dp, start = 12.dp, end = 12.dp)
+            .fillMaxWidth(),
         textStyle = TextStyle(
             color = Color.White,
             fontSize = 20.sp,

@@ -8,8 +8,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import androidx.activity.SystemBarStyle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -23,8 +21,6 @@ import java.lang.ref.WeakReference
 class LaunchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val blackColor = ContextCompat.getColor(this, R.color.black)
-        val whiteColor = ContextCompat.getColor(this, R.color.white)
         val binding = ActivityLaunchBinding.inflate(layoutInflater)
         bindingRef = WeakReference(binding)
         setContentView(binding.root)

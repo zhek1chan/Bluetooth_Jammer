@@ -38,10 +38,12 @@ class ScanNearbyDevices
 		val bluetoothManager: BluetoothManager? =
 			getSystemService(context, BluetoothManager::class.java)
 		val bluetoothAdapter: BluetoothAdapter? = bluetoothManager?.adapter
-
-		if(bluetoothAdapter?.isEnabled == true && !isScanning)
+		val isScanning = isScanning
+		if (isScanning) {
+			resumeScanning()
+		} else if (bluetoothAdapter?.isEnabled == true)
 		{
-			isScanning = true
+			this.isScanning = true
 			// Create a runnable to scan every second
 			runnable = object: Runnable
 			{

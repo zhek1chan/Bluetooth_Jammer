@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothManager
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.text.isDigitsOnly
 import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.lifecycleScope
 import com.eikarna.bluetoothjammer.api.L2capFloodAttack
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.materialswitch.MaterialSwitch
@@ -52,6 +54,10 @@ class AttackActivity: AppCompatActivity()
 	{
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.attack_layout)
+		findViewById<ImageView>(R.id.backButton).setOnClickListener {
+			stopAttack()
+			this.onBackPressed()
+		}
 		setupBluetooth()
 		initViews()
 		setupEventListeners()
@@ -127,11 +133,12 @@ class AttackActivity: AppCompatActivity()
 		bluetoothAdapter?.cancelDiscovery()
 		activeAttacks.clear()
 
-		appendLog("Attack started on $deviceName ($address) with $threads threads")
+		appendLog("Началась атака $deviceName ($address) с $threads потоками")
 		showToast("Attack running - use STOP button to end")
 
 		repeat(threads) {
-			L2capFloodAttack(address).apply {
+			L2capFloodAttack(address, lifecycleScope).apply {
+				appendLog("Идёт атака...")
 				startAttack(this@AttackActivity, logAttack)
 				activeAttacks.add(this)
 			}
