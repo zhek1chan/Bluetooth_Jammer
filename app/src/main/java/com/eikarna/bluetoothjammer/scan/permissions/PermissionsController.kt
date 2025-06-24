@@ -2,6 +2,7 @@ package com.eikarna.bluetoothjammer.scan.permissions
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
@@ -14,52 +15,55 @@ class PermissionsController : IPermissionsController {
     private val permissionsMap: MutableMap<String, Boolean> = mutableMapOf()
     private val permissionRequest: MutableList<String> = ArrayList()
 
-
-    init {
-        permissionsMap[Manifest.permission.BLUETOOTH_SCAN] = false
-        permissionsMap[Manifest.permission.ACCESS_FINE_LOCATION] = false
-        permissionsMap[Manifest.permission.BLUETOOTH_CONNECT] = false
-    }
-
     override fun checkPermissions(): Boolean {
-        return permissionsMap.all {
-            it.value // checks if all permissions granted
-        }
+        return permissionsMap.all { it.value }
     }
 
     override fun requestPermissions(activity: ComponentActivity) {
-
         setLaunchPermissionRequest(activity)
+        setupPermissionsForApiLevel(activity)
 
-        /**
-         * checks every permission if is granted
-         * and updated the map
-         */
         permissionsMap.forEach {
             permissionsMap.replace(it.key, isPermissionGranted(activity, it.key))
         }
 
-        //map of permission that denied
-        val deniedMap = permissionsMap.filter {
-            !it.value
-        }
-        Log.d("permissions", "deniedMap: $deniedMap")
+        val deniedMap = permissionsMap.filter { !it.value }
+        Log.d("Permissions", "Denied permissions: $deniedMap")
 
-        deniedMap.forEach {
-            addPermissionToRequest(it.key)
-        }
-        Log.d("permissions", "permissionRequest: $permissionRequest")
-
-        Log.d("permissions", "permissionMap: $permissionsMap")
-
+        deniedMap.forEach { addPermissionToRequest(it.key) }
+        Log.d("Permissions", "Requesting permissions: $permissionRequest")
 
         if (permissionRequest.isNotEmpty()) {
             permissionLauncher.launch(permissionRequest.toTypedArray())
         }
     }
 
+    private fun setupPermissionsForApiLevel(activity: ComponentActivity) {
+        permissionsMap.clear()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            permissionsMap[Manifest.permission.BLUETOOTH_SCAN] = false
+            permissionsMap[Manifest.permission.BLUETOOTH_CONNECT] = false
+
+            if (activity.packageManager.hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS)) {
+                permissionsMap[Manifest.permission.ACCESS_FINE_LOCATION] = false
+            }
+        } else {
+            permissionsMap[Manifest.permission.ACCESS_FINE_LOCATION] = false
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                permissionsMap[Manifest.permission.ACCESS_COARSE_LOCATION] = false
+            }
+        }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            permissionsMap[Manifest.permission.BLUETOOTH] = false
+            permissionsMap[Manifest.permission.BLUETOOTH_ADMIN] = false
+        }
+    }
+
     private fun addPermissionToRequest(permission: String) {
-        this.permissionRequest.add(permission)
+        if (!permissionRequest.contains(permission)) {
+            this.permissionRequest.add(permission)
+        }
     }
 
     private fun isPermissionGranted(activity: ComponentActivity, permission: String) =
@@ -71,13 +75,10 @@ class PermissionsController : IPermissionsController {
     private fun setLaunchPermissionRequest(activity: ComponentActivity) {
         permissionLauncher =
             activity.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-                permissionsMap.forEach { permission ->
-                    permissionsMap.replace(
-                        permission.key,
-                        permissions[permission.key] ?: permission.value
-                    )
+                permissions.entries.forEach { entry ->
+                    permissionsMap[entry.key] = entry.value
                 }
+                Log.d("Permissions", "Updated permissions after request: $permissionsMap")
             }
-
     }
 }
