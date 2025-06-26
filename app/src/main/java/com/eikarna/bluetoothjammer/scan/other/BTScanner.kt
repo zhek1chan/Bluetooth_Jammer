@@ -67,7 +67,7 @@ data class BTScanner(
 	@SuppressLint("MissingPermission", "SimpleDateFormat")
 	private val scanCallback = BluetoothAdapter.LeScanCallback { device, rssi, _ ->
 		val distance = BTUtils.rssiToDistance(rssi, signalStrength)
-		val name = if(device.name != null)
+		val name = if (device.name != null && device.address != device.name)
 		{
 			device.name
 		}

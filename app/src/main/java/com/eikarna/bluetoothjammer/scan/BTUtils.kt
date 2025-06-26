@@ -19,7 +19,7 @@ object BTUtils {
    private fun Double.format(fracDigits: Int): Double {
         val df = DecimalFormat()
         df.maximumFractionDigits = fracDigits
-        return df.format(this).toDouble()
+        return df.format(this).replace(',','.').toDouble()
     }
 
 
